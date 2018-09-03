@@ -48,21 +48,21 @@ let newData = [
  * @returns {Object} an object with its keys set as the result of the group predicate and its values set as the grouped objects
  */
 const groupByKey = (items, fn) => {
-    let groupedMap = items.reduce((acc, cur) => {
-        // apply the predicate function
-        const key = fn(cur),
-              elem = acc[key];
-        if(!elem) {
-            // create a new group
-            acc[key] = [cur];
-        } else {
-            // add elem in the group
-            elem.push(cur);
-        }
-        return acc;
-    }, {});
+  let groupedMap = items.reduce((acc, cur) => {
+    // apply the predicate function
+    const key = fn(cur),
+          elem = acc[key];
+    if(!elem) {
+      // create a new group
+      acc[key] = [cur];
+    } else {
+      // add elem in the group
+      elem.push(cur);
+    }
+    return acc;
+  }, {});
 
-    return groupedMap;
+  return groupedMap;
 };
 
 /**
