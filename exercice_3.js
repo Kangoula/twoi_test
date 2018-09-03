@@ -100,12 +100,33 @@ const mergeData = (objects) => {
   }, {});
 };
 
+/**
+ * Returns its param.
+ */
+const identity = x => x;
 
-let sorted = Object.entries(data).sort();
-sorted = groupByKey(sorted, e => e[0].substring(0,3));
-sorted = Object.values(sorted);
-sorted = sorted.map(cleanGroup);
-sorted = sorted.map(mergeData);
+/**
+ * Functional programming fanciness
+ * Takes functions and apply them in order with the previous function's result as its param
+ *
+ * @param {Function} fns one or more function(s)
+ * @param x the data we want to process with the functions
+ *
+ * @returns the result of applying the input functions
+ */
+const pipe = (...fns) => fns.reduce((acc, cur) => x => cur(acc(x)), identity);
+
+let sorted = pipe(
+  // sort the objects by key
+  data => Object.entries(data).sort(),
+  // group by the first 3 char of the elem
+  data => groupByKey(data, e => e[0].substring(0,3)),
+  // remove the group
+  data => Object.values(data),
+  // remove the feature vector from each groups' items
+  data => data.map(cleanGroup),
+  // merge
+  data => data.map(mergeData))(data);
 
 console.log("sorted", sorted);
 console.log("expected", newData);
