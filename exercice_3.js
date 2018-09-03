@@ -18,7 +18,7 @@
 let data = {
   '0-0_0-0': {emotion: {anger:0.1,happiness:0.9}},
   '0-0': {label: 'face'},
-  '0-0_0-0_0-0': {gender: 'famale'},
+  '0-0_0-0_0-0': {gender: 'female'},
   '0-2': {label: 'face'},
   '0-3': {label: 'car'},
   '0-2_0-1_0-0': {gender: 'male'},
@@ -42,13 +42,13 @@ let newData = [
 /**
  * Group objects from an array by their keys with a predicate function
  *
- * @param {Array} coll the array of objets we want to group
+ * @param {Array} items the array of objets we want to group
  * @param {Function} fn the predicate function to decide if an object should be added in a group
  *
  * @returns {Object} an object with its keys set as the result of the group predicate and its values set as the grouped objects
  */
-const groupByKey = (coll, fn) => {
-    let groupedMap = coll.reduce((acc, cur) => {
+const groupByKey = (items, fn) => {
+    let groupedMap = items.reduce((acc, cur) => {
         // apply the predicate function
         const key = fn(cur),
               elem = acc[key];
@@ -65,8 +65,47 @@ const groupByKey = (coll, fn) => {
     return groupedMap;
 };
 
+/**
+ * Removes the feature vector for each element of the input Array
+ *
+ * @param {Array} items nested Array shaped like [[fectureVector, object],...]
+ *
+ * @returns {Array} an flat array without the feature vector(s) [object, ...]
+ */
+const cleanGroup = (items) => {
+  return items.map((item) => { return item[1]; });
+};
+
+/**
+ * Merge the Objects in an array into a single Object base on their keys
+ *
+ * @param {Array} objects an Array of Objects
+ *
+ * @returns {Object} the merged object obtainend from the input Array
+ */
+const mergeData = (objects) => {
+  return objects.reduce((acc, cur) => {
+    // extract the main key an value from the current Object
+    const key = Object.keys(cur)[0],
+          value = Object.values(cur)[0];
+
+    if(!acc[key]) {
+      // simple merge if the key doesn't exists
+      return {...acc, ...cur};
+    } else {
+      // merge only the value of the current object otherwise
+      acc[key] = {...acc[key], ...value};
+      return acc;
+    }
+  }, {});
+};
 
 
 let sorted = Object.entries(data).sort();
-sorted = groupByKey(sorted, (e) => { return e[0].substring(0,3);});
+sorted = groupByKey(sorted, e => e[0].substring(0,3));
+sorted = Object.values(sorted);
+sorted = sorted.map(cleanGroup);
+sorted = sorted.map(mergeData);
+
 console.log("sorted", sorted);
+console.log("expected", newData);
