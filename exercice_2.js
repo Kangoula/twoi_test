@@ -206,7 +206,7 @@ class ImageColorModifier {
 
 
 let imgModifier = new ImageColorModifier();
-imgModifier.load('./tt.rgb'); // take a simple white image
+imgModifier.load('./image.rgb'); // take a simple white image
 imgModifier.remove('#0000FF'); // remove blue color
 imgModifier.remove([0, 255, 0]); // remove green color
 imgModifier.save('./monImage2.rgb'); // save the modified image, it should be red
